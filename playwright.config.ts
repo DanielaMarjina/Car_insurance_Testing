@@ -13,6 +13,12 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  /* Limit each test to 5 seconds. */
+  timeout: 5_000,
+  /* Limit auto-retrying assertions like expect(...).toBeVisible() to 5 seconds. */
+  expect: {
+    timeout: 5_000,
+  },
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -27,6 +33,12 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
     baseURL: 'http://ec2-63-177-112-236.eu-central-1.compute.amazonaws.com',
+
+    /* Limit Playwright auto-wait for actions like click/fill to 5 seconds. */
+    actionTimeout: 5_000,
+    headless: false,
+    /* Limit waits for page navigation to 5 seconds as well. */
+    navigationTimeout: 5_000,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
