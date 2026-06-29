@@ -25,4 +25,6 @@ test('add owner', async ({ page }) => {
 
   // Submit the form.
   await page.getByTestId('create-owner-button').click();
+
+  //TO DO: Add assertions to verify that the owner was added successfully, such as checking for a success message or verifying that the new owner appears in the list of owners.
 });
