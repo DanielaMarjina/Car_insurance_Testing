@@ -32,7 +32,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('')`. */
-    baseURL: 'http://ec2-63-177-112-236.eu-central-1.compute.amazonaws.com',
+    baseURL: 'http://ec2-63-178-240-141.eu-central-1.compute.amazonaws.com/',
 
     /* Limit Playwright auto-wait for actions like click/fill to 5 seconds. */
     actionTimeout: 5_000,

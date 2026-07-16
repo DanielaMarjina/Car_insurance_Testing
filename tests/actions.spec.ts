@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 
-test('dark mode toggle', async ({ page }) => {
+test('navbar-theme-toggle', async ({ page }) => {
   // Open the application using the baseURL from the Playwright config.
   await page.goto('/');
-  await page.getByTestId('dark-mode-toggle').click();
+  await page.getByTestId('navbar-theme-toggle').click();
 });
 test('add owner', async ({ page }) => {
   // We generate a unique value so the demo can be run multiple times without conflicts.
