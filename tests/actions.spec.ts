@@ -28,3 +28,30 @@ test('add owner', async ({ page }) => {
 
   //TO DO: Add assertions to verify that the owner was added successfully, such as checking for a success message or verifying that the new owner appears in the list of owners.
 });
+
+test('Trying to find an owner by searching their email',async({page})=>{
+  const uniqueId = Date.now();
+
+  // Start from the Owners page.
+  await page.goto('/');
+
+  // Move from the list page to the Add Owner form.
+  await page.getByTestId('owners-search-input').click();
+
+  // Fill the form like a real user would.
+  await page.getByTestId('owners-search-input').fill(`demo.owner.${uniqueId}@example.com`);
+
+  // Submit the form.
+  await page.getByTestId('owners-search-input').click();
+})
+
+test('Trying to find an owner by searching numbers', async ({ page }) => {
+  await page.goto('/');
+
+  const searchInput = page.getByTestId('owners-search-input');
+
+  await searchInput.fill('1234');
+
+  await expect(page.getByText('No owners found.')).toBeVisible();
+});
+
