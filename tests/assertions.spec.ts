@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { OwnerPage } from "./pages/owner.page";
 
 
-  test('license year before birthdate', async ({ page }) => {
+test('license year before birthdate', async ({ page }) => {
   const ownerPage = new OwnerPage(page);
   const uniqueId = Date.now();
 
@@ -51,10 +51,8 @@ test("driver license year must be at least 18 years after birth year", async ({
 
   await page.getByTestId("name-input").fill("Demo Owner");
 
-  // Birth year = 2003
   await page.getByTestId("birthdate-input").fill("2003-06-29");
 
-  // Only 2 years later -> invalid
   await page.getByTestId("year_of_driver_license-input").fill("2005");
 
   await page.getByTestId("driver_license_cat-select").selectOption("B");
@@ -63,7 +61,6 @@ test("driver license year must be at least 18 years after birth year", async ({
 
   await page.getByTestId("create-owner-button").click();
 
-  // Expected validation
   await page
     .getByTestId("owners-search-input")
     .fill(`demo.${uniqueId}@example.com`);
@@ -73,30 +70,26 @@ test("driver license year must be at least 18 years after birth year", async ({
   ).not.toBeVisible();
 });
 
-test("should not allow creating a car with an invalid VIN", async ({
-  page,
-}) => {
-  const uniqueId = Date.now();
-  const vin= "sadffdsfdfds";
 
-  // Open Cars page for an owner
+test("should not allow creating a car with an invalid VIN", async ({ page }) => {
+  const invalidVin = `BAD${Date.now()}`;
+
   await page.goto("/owners/11111111-1111-1111-1111-111111111111/cars");
 
-  // Open Add Car form
   await page.getByTestId("add-owner-car-button").click();
 
-  // Fill the form
-  await page.getByTestId("vin-input").fill(vin);
+  await page.getByTestId("vin-input").fill(invalidVin);
   await page.getByTestId("make-input").fill("Toyota");
   await page.getByTestId("model-input").fill("Corolla");
   await page.getByTestId("year_of_manufacture-input").fill("2022");
-  await page.getByTestId("power-input").fill(`100`);
-  await page.getByTestId("cc-input").fill(`50`);
+  await page.getByTestId("power-input").fill("100");
+  await page.getByTestId("cc-input").fill("50");
   await page.getByTestId("category-select").selectOption("EURO3");
-  await page.getByTestId("create-car-button").click();
- 
 
-  await expect(page.locator("tr").last()).toBeVisible;
-   await expect(page.locator("tr").last().locator("td").first()).not.toContainText(vin);
-//  await expect(page.getByTestId("owner-cars-table")).not.toContainText("12345");
+  await page.getByTestId("create-car-button").click();
+
+  await page.goto("/owners/11111111-1111-1111-1111-111111111111/cars");
+
+  await expect(page.getByTestId("owner-cars-table"))
+    .not.toContainText(invalidVin);
 });
