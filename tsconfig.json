@@ -4,6 +4,7 @@
         "moduleResolution": "NodeNext",
         "module": "NodeNext",
         "strict": true,
+        "noImplicitAny": false,
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "types": [

@@ -36,7 +36,7 @@ export default defineConfig({
 
     /* Limit Playwright auto-wait for actions like click/fill to 5 seconds. */
     actionTimeout: 5_000,
-    headless: false,
+    headless: !!process.env.CI,
     /* Limit waits for page navigation to 5 seconds as well. */
     navigationTimeout: 5_000,
 
