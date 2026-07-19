@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 
-import { UiControl } from './UiControl.ts';
+import { UiControl } from './UiControl';
 
 export class InputControl extends UiControl {
     async fill(value: string) {

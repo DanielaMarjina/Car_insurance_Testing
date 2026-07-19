@@ -1,5 +1,10 @@
 import { expect, Page } from '@playwright/test';
 
+import { ButtonControl } from "../ui/controls/ButtonControl";
+import { InputControl } from "../ui/controls/InputControl";
+import { SelectControl } from "../ui/controls/SelectControl";
+import { UiControl } from "../ui/controls/UiControl";
+
 export type OwnerFormData = {
   name: string;
   birthdate: string;
@@ -9,46 +14,110 @@ export type OwnerFormData = {
 };
 
 export class OwnerPage {
-  constructor(private readonly page: Page) {}
+  constructor(private readonly page: Page) { }
 
   get ownersHeading() {
-    return this.page.getByRole('heading', { name: 'Owners' });
+    return new UiControl(
+      this.page.getByRole("heading", { name: "Owners" })
+    );
   }
 
   get addOwnerButton() {
-    return this.page.getByTestId('add-owner-button');
+    return new ButtonControl(
+      this.page.getByTestId("add-owner-button")
+    );
   }
 
   get darkModeToggle() {
-    return this.page.getByTestId('navbar-theme-toggle');
+    return new ButtonControl(
+      this.page.getByTestId("navbar-theme-toggle")
+    );
   }
 
   get nameInput() {
-    return this.page.getByTestId('name-input');
+    return new InputControl(
+      this.page.getByTestId("name-input")
+    );
   }
 
   get birthdateInput() {
-    return this.page.getByTestId('birthdate-input');
+    return new InputControl(
+      this.page.getByTestId("birthdate-input")
+    );
   }
 
   get licenseYearInput() {
-    return this.page.getByTestId('year_of_driver_license-input');
+    return new InputControl(
+      this.page.getByTestId("year_of_driver_license-input")
+    );
   }
 
   get licenseCategorySelect() {
-    return this.page.getByTestId('driver_license_cat-select');
+    return new SelectControl(
+      this.page.getByTestId("driver_license_cat-select")
+    );
   }
 
   get emailInput() {
-    return this.page.getByTestId('email-input');
+    return new InputControl(
+      this.page.getByTestId("email-input")
+    );
   }
 
   get createOwnerButton() {
-    return this.page.getByTestId('create-owner-button');
+    return new ButtonControl(
+      this.page.getByTestId("create-owner-button")
+    );
   }
 
   get licenseYearError() {
-    return this.page.getByTestId('year_of_driver_license-input-error');
+    return new UiControl(
+      this.page.getByTestId("year_of_driver_license-input-error")
+    );
+  }
+
+  get licenseCategoryFilter() {
+    return new ButtonControl(
+      this.page.getByTestId("owners-table-filter-driver_license_cat")
+    );
+  }
+
+  get ownersTable() {
+    return new UiControl(
+      this.page.getByTestId("owners-table")
+    );
+  }
+
+  get pageSizeSelect() {
+    return new SelectControl(
+      this.page.getByTestId("owners-table-page-size")
+    );
+  }
+
+  get nextPageButton() {
+    return new ButtonControl(
+      this.page.getByTestId("owners-table-next-page")
+    );
+  }
+
+  get previousPageButton() {
+    return new ButtonControl(
+      this.page.getByTestId("owners-table-previous-page")
+    );
+  }
+
+  rowByEmail(email: string) {
+    return this.page.locator("tbody tr").filter({
+      has: this.page.getByText(email),
+    });
+  }
+
+  async waitForTableUpdate() {
+    await expect
+      .poll(async () => {
+        return await this.page.locator("tbody tr").count();
+      })
+      .toBeGreaterThan(0);
   }
 
   async open() {
@@ -57,7 +126,7 @@ export class OwnerPage {
 
   async expectLoaded() {
     await expect(this.page).toHaveURL('/');
-    await expect(this.ownersHeading).toBeVisible();
+    await this.ownersHeading.expectVisible();
   }
 
   async toggleDarkMode() {
@@ -87,16 +156,77 @@ export class OwnerPage {
   }
 
   async expectLicenseYearError(
-    message = 'License year must be after birthdate.'
+    message = "License year must be after birthdate."
   ) {
-    await expect(this.licenseYearError).toBeVisible();
-    await expect(this.licenseYearError).toHaveText(message);
+    await this.licenseYearError.expectVisible();
+    await this.licenseYearError.expectText(message);
   }
 
   async expectNameTooLongError(
-    message = 'Name is too long.'
+    message = "Name is too long."
   ) {
-    await expect(this.nameInput).toBeVisible();
-    await expect(this.nameInput).toHaveText(message);
+    await expect(this.nameInput.locator).toHaveText(message);
+  }
+
+  async filterByLicenseCategory(category: string) {
+    await this.licenseCategoryFilter.click();
+
+    await this.page
+      .getByTestId(
+        `owners-table-filter-driver_license_cat-multiselect-option-${category}`
+      )
+      .click();
+
+    await this.waitForTableUpdate();
+  }
+
+  async filterByLicenseCategories(categories: string[]) {
+    await this.licenseCategoryFilter.click();
+
+    for (const category of categories) {
+      await this.page
+        .getByTestId(
+          `owners-table-filter-driver_license_cat-multiselect-option-${category}`
+        )
+        .click();
+    }
+
+    await this.waitForTableUpdate();
+  }
+
+  async changePageSize(size: string) {
+    await this.pageSizeSelect.selectOption(size);
+
+    await this.waitForTableUpdate();
+  }
+
+  async nextPage() {
+    await this.nextPageButton.click();
+
+    await this.waitForTableUpdate();
+  }
+
+  async previousPage() {
+    await this.previousPageButton.click();
+
+    await this.waitForTableUpdate();
+  }
+
+  async openCarsFromRow(email: string) {
+    await this.rowByEmail(email).click();
+  }
+
+  async openCarsFromAction(email: string) {
+    const row = this.rowByEmail(email);
+
+    await row
+      .getByRole("button", { name: "View cars" })
+      .click();
+  }
+
+  async backToOwners() {
+    await this.page.goBack();
+
+    await this.expectLoaded();
   }
 }

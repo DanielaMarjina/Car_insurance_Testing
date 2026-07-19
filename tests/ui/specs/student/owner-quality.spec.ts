@@ -9,7 +9,7 @@ test("@owners @smoke filter owners by one license category", async ({ page }) =>
 
     await ownerPage.filterByLicenseCategory("B");
 
-    await expect(ownerPage.ownersTable).toBeVisible();
+    await ownerPage.ownersTable.expectVisible();
 
 });
 
@@ -21,7 +21,7 @@ test("@owners @regression filter owners by multiple categories", async ({ page }
 
     await ownerPage.filterByLicenseCategories(["B", "C"]);
 
-    await expect(ownerPage.ownersTable).toBeVisible();
+    await ownerPage.ownersTable.expectVisible();
 
 });
 
@@ -33,7 +33,7 @@ test("@owners filter owners with no category", async ({ page }) => {
 
     await ownerPage.filterByLicenseCategory("NONE");
 
-    await expect(ownerPage.ownersTable).toBeVisible();
+    await ownerPage.ownersTable.expectVisible();
 
 });
 
@@ -45,7 +45,7 @@ test("@owners change page size", async ({ page }) => {
 
     await ownerPage.changePageSize("25");
 
-    await expect(ownerPage.pageSizeSelect).toHaveValue("25");
+    await ownerPage.pageSizeSelect.expectValue("25");
 
 });
 
@@ -109,11 +109,13 @@ test("@owners accessibility", async ({ page }) => {
 
     await ownerPage.open();
 
-    await expect(ownerPage.addOwnerButton).toHaveAccessibleName("Add Owner");
+    await expect(ownerPage.addOwnerButton.locator)
+        .toHaveAccessibleName("Add Owner");
 
-    await expect(ownerPage.darkModeToggle).toHaveAccessibleName("Dark mode");
+    await expect(ownerPage.darkModeToggle.locator)
+        .toHaveAccessibleName("Dark mode");
 
-    await expect(ownerPage.ownersTable).toBeVisible();
+    await ownerPage.ownersTable.expectVisible();
 
     await expect(page.getByRole("columnheader", { name: "Name" })).toBeVisible();
 
