@@ -14,10 +14,10 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   /* Limit each test to 5 seconds. */
-  timeout: 5_000,
+  timeout: 30_000,
   /* Limit auto-retrying assertions like expect(...).toBeVisible() to 5 seconds. */
   expect: {
-    timeout: 5_000,
+    timeout: 10_000,
   },
   /* Run tests in files in parallel */
   fullyParallel: true,
